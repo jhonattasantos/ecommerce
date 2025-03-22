@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "ecommerce"
+version = "0.1.0"
+description = "Sistema de e-commerce"
+authors = ["jhonatta <jhonattasantoss@outlook.com>"]
+readme = "README.md"
+packages = [{include = "ecommerce"}]
+
+[tool.poetry.dependencies]
+python = ">=3.13"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
