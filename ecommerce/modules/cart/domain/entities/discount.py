@@ -60,28 +60,29 @@ class Discount:
             
         return True
 
-    def calculate(self, order_value: Money) -> Money:
+    def apply_to(self, order_value: Money) -> Money:
         """
-        Calculate the discount amount based on the discount type and value.
+        Apply the discount to the order value.
         """
+        
         if not self.is_valid(order_value):
             return Money(0)
         
         if self.type == DiscountType.PERCENTAGE:
             # Calcular desconto percentual
-            print(f"Calculando desconto percentual: {self.value} de {order_value.amount}")
             discount_value = order_value.amount - (order_value.amount * (self.value / 100))
             return Money(discount_value)
             
         elif self.type == DiscountType.FIXED_AMOUNT:
             # Retornar valor fixo, limitado ao valor do pedido
-            fixed_amount = min(self.value, order_value.amount)
-            return Money(fixed_amount)
+            fixed_amount = min(self.value.amount, order_value.amount)
+            discount_value = order_value.amount - fixed_amount
+            return Money(discount_value)
             
         elif self.type == DiscountType.COUPON:
             # Lógica para cupons especiais pode ser mais complexa
             # Por simplicidade, tratamos como um desconto fixo
-            return Money(min(self.value, order_value.amount))
+            return Money(min(self.value.amount, order_value.amount))
             
         return Money(0)
         

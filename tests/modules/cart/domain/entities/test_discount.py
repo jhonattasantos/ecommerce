@@ -12,34 +12,34 @@ class TestDiscount:
         discount = Discount(type=DiscountType.PERCENTAGE, value=Decimal("10"))
         
         # Act
-        discounted_price = discount.calculate(original_price)
+        discounted_price = discount.apply_to(original_price)
         
         # Assert
         assert discounted_price.amount == Decimal("90.00")
     
-    # def test_fixed_discount_calculation(self):
-    #     """Testa cálculo de desconto de valor fixo."""
-    #     # Arrange
-    #     original_price = Money(Decimal("100.00"))
-    #     discount = Discount(fixed_amount=Money(Decimal("15.00")))
+    def test_fixed_discount_calculation(self):
+        """Testa cálculo de desconto de valor fixo."""
+        # Arrange
+        original_price = Money(Decimal("100.00"))
+        discount = Discount(type=DiscountType.FIXED_AMOUNT,value=Money(Decimal("15.00")))
         
-    #     # Act
-    #     discounted_price = discount.apply_to(original_price)
+        # Act
+        discounted_price = discount.apply_to(original_price)
         
-    #     # Assert
-    #     assert discounted_price.amount == Decimal("85.00")
+        # Assert
+        assert discounted_price.amount == Decimal("85.00")
     
-    # def test_discount_cannot_result_in_negative_price(self):
-    #     """Testa que um desconto não pode resultar em preço negativo."""
-    #     # Arrange
-    #     original_price = Money(Decimal("50.00"))
-    #     discount = Discount(fixed_amount=Money(Decimal("75.00")))
+    def test_discount_cannot_result_in_negative_price(self):
+        """Testa que um desconto não pode resultar em preço negativo."""
+        # Arrange
+        original_price = Money(Decimal("50.00"))
+        discount = Discount(type=DiscountType.FIXED_AMOUNT,value=Money(Decimal("75.00")))
         
-    #     # Act
-    #     discounted_price = discount.apply_to(original_price)
+        # Act
+        discounted_price = discount.apply_to(original_price)
         
-    #     # Assert
-    #     assert discounted_price.amount == Decimal("0.00")
+        # Assert
+        assert discounted_price.amount == Decimal("0.00")
     
     # def test_discount_with_minimum_purchase(self):
     #     """Testa desconto com valor mínimo de compra."""
