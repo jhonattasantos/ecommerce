@@ -125,3 +125,28 @@ class TestDiscount:
         
         assert future_discount.is_valid(original_price) is False
         assert future_discount.apply_to(original_price).amount == Decimal("100.00") 
+
+    def test_discount_usage_limit(self):
+        """Testa desconto com limite de uso."""
+        # Arrange
+        discount = Discount(
+            type=DiscountType.PERCENTAGE,
+            value=Decimal("10"),
+            max_usage_count=2
+        )
+        
+        # Act & Assert - Primeiro uso
+        original_price = Money(Decimal("100.00"))
+        result = discount.apply_to(original_price)
+
+        assert result.amount == Decimal("90.00")
+
+        # Act & Assert - Segundo uso
+        result = discount.apply_to(original_price)
+        assert result.amount == Decimal("90.00")
+
+        # Act & Assert - Terceiro uso
+        result = discount.apply_to(original_price)
+        assert result.amount == Decimal("100.00")
+        
+        

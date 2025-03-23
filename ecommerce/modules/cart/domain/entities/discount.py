@@ -65,9 +65,10 @@ class Discount:
         """
         Apply the discount to the order value.
         """
+        result = order_value
         
         if not self.is_valid(order_value):
-            return order_value
+            return result
         
         if self.type == DiscountType.PERCENTAGE:
             # Calcular desconto percentual
@@ -77,20 +78,23 @@ class Discount:
             if self.maximum_discount_amount.amount > 0 and total_discount > self.maximum_discount_amount.amount:
                 discount_value = order_value.amount - self.maximum_discount_amount.amount
             
-            return Money(discount_value)
+            result = Money(discount_value)
             
         elif self.type == DiscountType.FIXED_AMOUNT:
             # Retornar valor fixo, limitado ao valor do pedido
             fixed_amount = min(self.value.amount, order_value.amount)
             discount_value = order_value.amount - fixed_amount
-            return Money(discount_value)
+            result = Money(discount_value)
             
         elif self.type == DiscountType.COUPON:
             # Lógica para cupons especiais pode ser mais complexa
             # Por simplicidade, tratamos como um desconto fixo
-            return Money(min(self.value.amount, order_value.amount))
+            result = Money(min(self.value.amount, order_value.amount))
+
+        if self.max_usage_count:
+            self.use()
             
-        return Money(0)
+        return result
     
     def use(self) -> None:
         """
