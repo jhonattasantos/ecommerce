@@ -8,6 +8,8 @@ packages = [{include = "ecommerce"}]
 
 [tool.poetry.dependencies]
 python = ">=3.13"
+sqlalchemy = "^2.0.39"
+asyncio = "^3.4.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
