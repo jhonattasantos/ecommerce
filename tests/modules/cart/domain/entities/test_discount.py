@@ -54,7 +54,7 @@ class TestDiscount:
         small_purchase = Money(Decimal("50.00"))
         result = discount.apply_to(small_purchase)
 
-        assert result.amount == 0
+        assert result.amount == Decimal("50.00")
         
         # Act & Assert - Acima do mínimo
         large_purchase = Money(Decimal("200.00"))
@@ -81,44 +81,47 @@ class TestDiscount:
         result = discount.apply_to(large_purchase)
         assert result.amount == Decimal("450.00")  # Limitado a 50 de desconto
     
-    # def test_discount_validity_period(self):
-    #     """Testa desconto com período de validade."""
-    #     from datetime import datetime, timedelta
+    def test_discount_validity_period(self):
+        """Testa desconto com período de validade."""
+        from datetime import datetime, timedelta
         
-    #     # Arrange
-    #     now = datetime.now()
-    #     yesterday = now - timedelta(days=1)
-    #     tomorrow = now + timedelta(days=1)
+        # Arrange
+        now = datetime.now()
+        yesterday = now - timedelta(days=1)
+        tomorrow = now + timedelta(days=1)
         
-    #     # Desconto válido
-    #     valid_discount = Discount(
-    #         percentage=Decimal("10"),
-    #         start_date=yesterday,
-    #         end_date=tomorrow
-    #     )
+        # Desconto válido
+        valid_discount = Discount(
+            type=DiscountType.PERCENTAGE,
+            value=Decimal("10"),
+            valid_from=yesterday,
+            valid_until=tomorrow
+        )
         
-    #     # Desconto expirado
-    #     expired_discount = Discount(
-    #         percentage=Decimal("10"),
-    #         start_date=yesterday - timedelta(days=10),
-    #         end_date=yesterday
-    #     )
+        # Desconto expirado
+        expired_discount = Discount(
+            type=DiscountType.PERCENTAGE,
+            value=Decimal("10"),
+            valid_from=yesterday - timedelta(days=10),
+            valid_until=yesterday
+        )
         
-    #     # Desconto futuro
-    #     future_discount = Discount(
-    #         percentage=Decimal("10"),
-    #         start_date=tomorrow,
-    #         end_date=tomorrow + timedelta(days=10)
-    #     )
+        # Desconto futuro
+        future_discount = Discount(
+            type=DiscountType.PERCENTAGE,
+            value=Decimal("10"),
+            valid_from=tomorrow,
+            valid_until=tomorrow + timedelta(days=10)
+        )
         
-    #     original_price = Money(Decimal("100.00"))
+        original_price = Money(Decimal("100.00"))
         
-    #     # Act & Assert
-    #     assert valid_discount.is_valid() is True
-    #     assert valid_discount.apply_to(original_price).amount == Decimal("90.00")
+        # Act & Assert
+        assert valid_discount.is_valid(original_price) is True
+        assert valid_discount.apply_to(original_price).amount == Decimal("90.00")
         
-    #     assert expired_discount.is_valid() is False
-    #     assert expired_discount.apply_to(original_price).amount == Decimal("100.00")
+        assert expired_discount.is_valid(original_price) is False
+        assert expired_discount.apply_to(original_price).amount == Decimal("100.00")
         
-    #     assert future_discount.is_valid() is False
-    #     assert future_discount.apply_to(original_price).amount == Decimal("100.00") 
+        assert future_discount.is_valid(original_price) is False
+        assert future_discount.apply_to(original_price).amount == Decimal("100.00") 

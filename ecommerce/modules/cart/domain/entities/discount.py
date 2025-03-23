@@ -67,7 +67,7 @@ class Discount:
         """
         
         if not self.is_valid(order_value):
-            return Money(0)
+            return order_value
         
         if self.type == DiscountType.PERCENTAGE:
             # Calcular desconto percentual
