@@ -26,6 +26,7 @@ class Discount:
     code: str | None = None
     description: str = ''
     minimum_order_value: Money = field(default_factory=lambda: Money(0))
+    maximum_discount_amount: Money = field(default_factory=lambda: Money(0))
     valid_from: datetime = field(default_factory=datetime.now)
     valid_until: datetime | None = None
     max_usage_count: int | None = None
@@ -70,7 +71,12 @@ class Discount:
         
         if self.type == DiscountType.PERCENTAGE:
             # Calcular desconto percentual
-            discount_value = order_value.amount - (order_value.amount * (self.value / 100))
+            total_discount = order_value.amount * (self.value / 100)
+            discount_value = order_value.amount - total_discount
+
+            if self.maximum_discount_amount.amount > 0 and total_discount > self.maximum_discount_amount.amount:
+                discount_value = order_value.amount - self.maximum_discount_amount.amount
+            
             return Money(discount_value)
             
         elif self.type == DiscountType.FIXED_AMOUNT:
@@ -85,5 +91,11 @@ class Discount:
             return Money(min(self.value.amount, order_value.amount))
             
         return Money(0)
+    
+    def use(self) -> None:
+        """
+        Registra o uso do desconto, incrementando o contador de uso.
+        """
+        self.current_usage_count += 1
         
 
